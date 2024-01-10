@@ -114,7 +114,19 @@ func (h *RecipesHandler) CreateRecipe(w http.ResponseWriter, r *http.Request) {
 	// Define o status code para 200
 	w.WriteHeader(http.StatusOK)
 }
-func (h *RecipesHandler) ListRecipes(w http.ResponseWriter, r *http.Request)  {}
+func (h *RecipesHandler) ListRecipes(w http.ResponseWriter, r *http.Request) {
+	// Retorna as receitas da loja
+	resources, err := h.store.List()
+	// Converte a lista retornada em JSON usando a função Marshal
+	jsonBytes, err := json.Marshal(resources)
+	if err != nil {
+		InternalServerErrorHandler(w, r)
+		return
+	}
+	// Adiciona os dados em JSON para a resposta HTTP usando a função Write
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonBytes)
+}
 func (h *RecipesHandler) GetRecipe(w http.ResponseWriter, r *http.Request)    {}
 func (h *RecipesHandler) UpdateRecipe(w http.ResponseWriter, r *http.Request) {}
 func (h *RecipesHandler) DeleteRecipe(w http.ResponseWriter, r *http.Request) {}
