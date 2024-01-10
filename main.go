@@ -115,6 +115,7 @@ func (h *RecipesHandler) CreateRecipe(w http.ResponseWriter, r *http.Request) {
 	// Define o status code para 200
 	w.WriteHeader(http.StatusOK)
 }
+
 func (h *RecipesHandler) ListRecipes(w http.ResponseWriter, r *http.Request) {
 	// Retorna as receitas da loja
 	resources, err := h.store.List()
@@ -128,6 +129,7 @@ func (h *RecipesHandler) ListRecipes(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonBytes)
 }
+
 func (h *RecipesHandler) GetRecipe(w http.ResponseWriter, r *http.Request) {
 	// Recebe o nome do recurso via URl com /recipes/slug-nome-receita
 	matches := RecipeReWithID.FindStringSubmatch(r.URL.Path)
@@ -165,5 +167,7 @@ func (h *RecipesHandler) GetRecipe(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonBytes)
 }
+
 func (h *RecipesHandler) UpdateRecipe(w http.ResponseWriter, r *http.Request) {}
+
 func (h *RecipesHandler) DeleteRecipe(w http.ResponseWriter, r *http.Request) {}
