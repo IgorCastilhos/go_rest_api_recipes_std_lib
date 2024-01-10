@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/IgorCastilhos/go_rest_api_recipes_std_lib/recipes/pkg/recipes"
 	"net/http"
 	"regexp"
 )
@@ -12,13 +13,17 @@ var (
 )
 
 func main() {
+	// Cria a Store e o Recipe Handler
+	store := recipes.NewMemStore()
+	recipesHandler := NewRecipesHandler(store)
+
 	// Cria um multiplexador de requisições
 	// Recebe solicitações HTTP e as envia para os handlers correspondentes
 	mux := http.NewServeMux()
 	// Registra as rotas e os handlers
 	mux.Handle("/", &homeHandler{})
-	mux.Handle("/receitas", &RecipesHandler{})
-	mux.Handle("/receitas/", &RecipesHandler{})
+	mux.Handle("/receitas", recipesHandler)
+	mux.Handle("/receitas/", recipesHandler)
 	// Executa o servidor
 	err := http.ListenAndServe(":8080", mux)
 	if err != nil {
@@ -35,7 +40,24 @@ func (h *homeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Bem-vindo à página inicial!"))
 }
 
-type RecipesHandler struct{}
+type recipeStore interface {
+	Add(name string, recipe recipes.Recipe) error
+	Get(name string) (recipes.Recipe, error)
+	Update(name string, recipe recipes.Recipe) error
+	List() (map[string]recipes.Recipe, error)
+	Remove(name string) error
+}
+
+// RecipesHandler - implementa http.Handler e despacha requisições para a loja
+type RecipesHandler struct {
+	store recipeStore
+}
+
+func NewRecipesHandler(s recipeStore) *RecipesHandler {
+	return &RecipesHandler{
+		store: s,
+	}
+}
 
 // Roteamento (Routing)
 func (h *RecipesHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
