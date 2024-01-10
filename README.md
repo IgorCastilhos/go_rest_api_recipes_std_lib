@@ -11,8 +11,9 @@
 | Excluir   | DELETE | /receitas/<id> | Excluir uma entidade                              |
 ### Todo
 
-1. [ ]  Criar
-2. [ ]  Listar
-3. [ ]  Ler
-4. [ ]  Atualizar
-5. [ ]  Excluir
+1. [x]  Routing
+2. [ ]  Criar
+3. [ ]  Listar
+4. [ ]  Ler
+5. [ ]  Atualizar
+6. [ ]  Excluir
