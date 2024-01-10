@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	recipes "github.com/IgorCastilhos/go_rest_api_recipes_std_lib/pkg/recipes"
 	"github.com/gosimple/slug"
 	"net/http"
@@ -127,6 +128,42 @@ func (h *RecipesHandler) ListRecipes(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonBytes)
 }
-func (h *RecipesHandler) GetRecipe(w http.ResponseWriter, r *http.Request)    {}
+func (h *RecipesHandler) GetRecipe(w http.ResponseWriter, r *http.Request) {
+	// Recebe o nome do recurso via URl com /recipes/slug-nome-receita
+	matches := RecipeReWithID.FindStringSubmatch(r.URL.Path)
+
+	// Espera que as correspondências sejam length >= 2 (full str + 1 grupo)
+	if len(matches) < 2 {
+		InternalServerErrorHandler(w, r)
+		return
+	}
+
+	// A primeira correspondência ou match ao chamar FindStringSubmatch
+	// é sempre a string correspondente completa e, em seguida, todos os
+	// subgrupos. Olhando para a regex RecipeReWithID, o primeiro grupo
+	// correspondente é o ID do recurso. Só precisamos chamar a função
+	// Get da loja com esse ID
+	recipe, err := h.store.Get(matches[1])
+	if err != nil {
+		// caso especial de erro NotFound
+		if errors.Is(err, recipes.NotFoundErr) {
+			NotFoundHandler(w, r)
+			return
+		}
+		// Qualquer outro erro
+		InternalServerErrorHandler(w, r)
+		return
+	}
+	// Converte a struct em dados JSON
+	jsonBytes, err := json.Marshal(recipe)
+	if err != nil {
+		InternalServerErrorHandler(w, r)
+		return
+	}
+
+	// Adiciona os dados em JSON para a resposta HTTP usando a função Write
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonBytes)
+}
 func (h *RecipesHandler) UpdateRecipe(w http.ResponseWriter, r *http.Request) {}
 func (h *RecipesHandler) DeleteRecipe(w http.ResponseWriter, r *http.Request) {}
