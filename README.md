@@ -12,7 +12,7 @@
 ### Todo
 
 1. [x]  Routing
-2. [ ]  Criar
+2. [x]  Criar
 3. [ ]  Listar
 4. [ ]  Ler
 5. [ ]  Atualizar

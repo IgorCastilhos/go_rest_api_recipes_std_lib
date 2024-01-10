@@ -1,7 +1,9 @@
 package main
 
 import (
-	"github.com/IgorCastilhos/go_rest_api_recipes_std_lib/recipes/pkg/recipes"
+	"encoding/json"
+	recipes "github.com/IgorCastilhos/go_rest_api_recipes_std_lib/pkg/recipes"
+	"github.com/gosimple/slug"
 	"net/http"
 	"regexp"
 )
@@ -29,6 +31,16 @@ func main() {
 	if err != nil {
 		return
 	}
+}
+
+func InternalServerErrorHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusInternalServerError)
+	w.Write([]byte("500 Internal Server Error"))
+}
+
+func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotFound)
+	w.Write([]byte("404 Not Found"))
 }
 
 type homeHandler struct{}
@@ -82,7 +94,26 @@ func (h *RecipesHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *RecipesHandler) CreateRecipe(w http.ResponseWriter, r *http.Request) {}
+// CreateRecipe - Lê os arquivos JSON transportados pelo corpo da requisição HTTP
+// e converte em uma instância de recipes.Recipe
+func (h *RecipesHandler) CreateRecipe(w http.ResponseWriter, r *http.Request) {
+	// Objeto de receita que vai ser populado pelos dados JSON
+	var recipe recipes.Recipe
+	if err := json.NewDecoder(r.Body).Decode(&recipe); err != nil {
+		InternalServerErrorHandler(w, r)
+		return
+	}
+
+	// Converte o nome da receita em uma string URL mais amigável
+	resourceID := slug.Make(recipe.Name)
+	if err := h.store.Add(resourceID, recipe); err != nil {
+		InternalServerErrorHandler(w, r)
+		return
+	}
+
+	// Define o status code para 200
+	w.WriteHeader(http.StatusOK)
+}
 func (h *RecipesHandler) ListRecipes(w http.ResponseWriter, r *http.Request)  {}
 func (h *RecipesHandler) GetRecipe(w http.ResponseWriter, r *http.Request)    {}
 func (h *RecipesHandler) UpdateRecipe(w http.ResponseWriter, r *http.Request) {}
