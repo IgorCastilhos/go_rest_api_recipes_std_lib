@@ -168,6 +168,29 @@ func (h *RecipesHandler) GetRecipe(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonBytes)
 }
 
-func (h *RecipesHandler) UpdateRecipe(w http.ResponseWriter, r *http.Request) {}
+func (h *RecipesHandler) UpdateRecipe(w http.ResponseWriter, r *http.Request) {
+	matches := RecipeReWithID.FindStringSubmatch(r.URL.Path)
+	if len(matches) < 2 {
+		InternalServerErrorHandler(w, r)
+		return
+	}
+
+	var recipe recipes.Recipe
+	if err := json.NewDecoder(r.Body).Decode(&recipe); err != nil {
+		InternalServerErrorHandler(w, r)
+		return
+	}
+
+	if err := h.store.Update(matches[1], recipe); err != nil {
+		if errors.Is(recipes.NotFoundErr, err) {
+			NotFoundHandler(w, r)
+			return
+		}
+		InternalServerErrorHandler(w, r)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
 
 func (h *RecipesHandler) DeleteRecipe(w http.ResponseWriter, r *http.Request) {}
