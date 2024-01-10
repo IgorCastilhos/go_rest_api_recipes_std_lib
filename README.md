@@ -13,7 +13,7 @@
 
 1. [x]  Routing
 2. [x]  Criar
-3. [ ]  Listar
-4. [ ]  Ler
+3. [x]  Listar
+4. [x]  Ler
 5. [ ]  Atualizar
 6. [ ]  Excluir
