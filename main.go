@@ -5,6 +5,12 @@ import (
 	"regexp"
 )
 
+// As duas regexes diferenciam os dois possíveis URIs (/recipes vs. /recipes/<id>)
+var (
+	RecipeRe       = regexp.MustCompile(`^/receitas/*$`)
+	RecipeReWithID = regexp.MustCompile(`^/receitas/([a-z0-9]+(?:-[a-z0-9]+)+)$`)
+)
+
 func main() {
 	// Cria um multiplexador de requisições
 	// Recebe solicitações HTTP e as envia para os handlers correspondentes
@@ -20,12 +26,6 @@ func main() {
 	}
 }
 
-type RecipesHandler struct{}
-
-func (h *RecipesHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Bem-vindo à página de receitas!"))
-}
-
 type homeHandler struct{}
 
 // Na STD lib, um handler é uma interface que define a assinatura do método
@@ -35,11 +35,7 @@ func (h *homeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Bem-vindo à página inicial!"))
 }
 
-// As duas regexes diferenciam os dois possíveis URIs (/recipes vs. /recipes/<id>)
-var (
-	RecipeRe       = regexp.MustCompile(`^/receitas/*$`)
-	RecipeReWithID = regexp.MustCompile(`^/receitas/([a-z0-9]+(?:-[a-z0-9]+)+)$`)
-)
+type RecipesHandler struct{}
 
 // Roteamento (Routing)
 func (h *RecipesHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
