@@ -15,5 +15,5 @@
 2. [x]  Criar
 3. [x]  Listar
 4. [x]  Ler
-5. [ ]  Atualizar
-6. [ ]  Excluir
+5. [x]  Atualizar
+6. [x]  Excluir
