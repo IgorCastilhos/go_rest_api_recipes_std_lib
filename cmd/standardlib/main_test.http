@@ -1,0 +1,54 @@
+###
+GET http://localhost:8080
+
+###
+POST http://localhost:8080/receitas/
+Content-Type: application/json
+
+{
+  "name": "Torrada de queijo e presunto",
+  "ingredients": [
+    {
+      "name": "pão"
+    },{
+      "name": "presunto"
+    }, {
+      "name": "queijo"
+    }
+  ]
+}
+
+###
+GET localhost:8080/receitas
+
+###
+GET localhost:8080/receitas/torrada-de-queijo-e-presunto
+
+###
+PUT localhost:8080/receitas/torrada-de-queijo-e-presunto
+Content-Type: application/json
+
+{
+  "name": "Torrada de queijo e presunto",
+  "ingredients": [
+    {
+      "name": "pão"
+    },{
+      "name": "presunto"
+    }, {
+      "name": "queijo"
+    }, {
+      "name": "manteiga"
+    }
+  ]
+}
+
+###
+GET localhost:8080/receitas/torrada-de-queijo-e-presunto
+
+
+###
+DELETE localhost:8080/receitas/torrada-de-queijo-e-presunto
+
+###
+GET http://localhost:8080/receitas/torrada-de-queijo-e-presunto
