@@ -17,3 +17,7 @@
 4. [x]  Ler
 5. [x]  Atualizar
 6. [x]  Excluir
+
+### Construindo uma API REST com o pacote de roteamento gorilla/mux
+
+* O roteador combina URLs com funções handler e as chama adequadamente, o que ajuda a reduzir o código necessário no multiplexador criado para usar a Biblioteca Padrão
