@@ -21,3 +21,7 @@
 ### Construindo uma API REST com o pacote de roteamento gorilla/mux
 
 * O roteador combina URLs com funções handler e as chama adequadamente, o que ajuda a reduzir o código necessário no multiplexador criado para usar a Biblioteca Padrão
+
+### Construindo uma API REST com o framework web Gin
+
+* Gin é popular para desenvolvimento web com Go porque fornece uma API intuitiva e muitas funcionalidades integradas.

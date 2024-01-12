@@ -1,0 +1,35 @@
+###
+GET http://localhost:8080
+
+###
+POST http://localhost:8080/receitas
+Content-Type: application/json
+
+{
+  "name": "Torrada de presunto e queijo",
+  "ingredients": [
+    {
+      "name": "pão"
+    },{
+      "name": "presunto"
+    },{
+      "name": "queijo"
+    }
+  ]
+}
+
+> {%
+  client.test("Request executada com sucesso", function() {
+    client.assert(response.status === 200, "Status de resposta não é 200");
+  });
+%}
+
+###
+GET http://localhost:8080/receitas
+
+> {%
+  client.test("Request executada com sucesso", function() {
+    client.assert(response.status === 200, "Status de resposta não é 200");
+    client.assert(JSON.stringify(response.body) === "{\"torrada-de-presunto-e-queijo\":{\"name\":\"Torrada de presunto e queijo\",\"ingredients\":[{\"name\":\"pão\"},{\"name\":\"presunto\"},{\"name\":\"queijo\"}]}}", "Body match expected response")
+  });
+%}
