@@ -10,6 +10,7 @@ import (
 func main() {
 	// Cria um roteador Gin
 	router := gin.Default()
+
 	// Instancia o recipe handler e provisiona uma implementação da store de dados
 	store := recipes.NewMemStore()
 	recipesHandler := NewRecipeHandler(store)
@@ -23,10 +24,7 @@ func main() {
 	router.DELETE("/receitas/:id", recipesHandler.DeleteRecipe)
 
 	// Inicia o servidor
-	err := router.Run()
-	if err != nil {
-		return
-	}
+	router.Run()
 }
 
 func homePage(c *gin.Context) {
@@ -54,26 +52,20 @@ type recipeStore interface {
 // Definindo a assinatura das funções handler
 
 func (h RecipesHandler) CreateRecipe(c *gin.Context) {
-	// *gin.Context provê uma func ShouldBindJSON que converte o corpo do HTTP em uma struct.
-	// ShouldBindJSON é essencialmente um wrapper em torno da função JSON.Marshal usada nas outras APIs
-
 	// Pega o corpo da requisição e converte em recipes.Recipe
 	var recipe recipes.Recipe
 	if err := c.ShouldBindJSON(&recipe); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
 	id := slug.Make(recipe.Name)
 
-	err := h.store.Add(id, recipe)
-	if err != nil {
-		return
-	}
+	h.store.Add(id, recipe)
 
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
 func (h RecipesHandler) ListRecipes(c *gin.Context) {
-	// Chama a store para pegar a lista de receitas
 	r, err := h.store.List()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -81,13 +73,46 @@ func (h RecipesHandler) ListRecipes(c *gin.Context) {
 
 	c.JSON(200, r)
 }
-func (h RecipesHandler) GetRecipe(c *gin.Context)    {}
-func (h RecipesHandler) UpdateRecipe(c *gin.Context) {}
-func (h RecipesHandler) DeleteRecipe(c *gin.Context) {}
+func (h RecipesHandler) GetRecipe(c *gin.Context) {
+	id := c.Param("id")
 
-// NewRecipesHandler é o construtor de RecipesHandler
-func NewRecipesHandler(s recipeStore) *RecipesHandler {
-	return &RecipesHandler{
-		store: s,
+	recipe, err := h.store.Get(id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 	}
+
+	c.JSON(200, recipe)
+}
+func (h RecipesHandler) UpdateRecipe(c *gin.Context) {
+	var recipe recipes.Recipe
+	if err := c.ShouldBindJSON(&recipe); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	id := c.Param("id")
+
+	err := h.store.Update(id, recipe)
+	if err != nil {
+		if err == recipes.NotFoundErr {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "success"})
+}
+func (h RecipesHandler) DeleteRecipe(c *gin.Context) {
+	id := c.Param("id")
+
+	err := h.store.Remove(id)
+	if err != nil {
+		if err == recipes.NotFoundErr {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }

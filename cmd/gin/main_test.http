@@ -1,5 +1,5 @@
 ###
-GET http://localhost:8080
+GET http://localhost:8080/
 
 ###
 POST http://localhost:8080/receitas
@@ -31,5 +31,69 @@ GET http://localhost:8080/receitas
   client.test("Request executada com sucesso", function() {
     client.assert(response.status === 200, "Status de resposta não é 200");
     client.assert(JSON.stringify(response.body) === "{\"torrada-de-presunto-e-queijo\":{\"name\":\"Torrada de presunto e queijo\",\"ingredients\":[{\"name\":\"pão\"},{\"name\":\"presunto\"},{\"name\":\"queijo\"}]}}", "Body match expected response")
+  });
+%}
+
+###
+GET http://localhost:8080/receitas/torrada-de-presunto-e-queijo
+
+> {%
+  client.test("Request executada com sucesso", function() {
+    client.assert(response.status === 200, "Status de resposta não é 200");
+    client.assert(JSON.stringify(response.body) === "{\"name\":\"Torrada de presunto e queijo\",\"ingredients\":[{\"name\":\"pão\"},{\"name\":\"presunto\"},{\"name\":\"queijo\"}]}", "Body match expected response")
+  });
+%}
+
+###
+PUT  http://localhost:8080/receitas/torrada-de-presunto-e-queijo
+Content-Type: application/json
+
+{
+  "name": "Torrada de presunto e queijo",
+  "ingredients": [
+    {
+      "name": "pão"
+    },{
+      "name": "presunto"
+    },{
+      "name": "queijo"
+    },{
+      "name": "butter"
+    }
+  ]
+}
+
+> {%
+  client.test("Request executada com sucesso", function() {
+    client.assert(response.status === 200, "Status de resposta não é 200");
+  });
+%}
+
+###
+GET http://localhost:8080/receitas/torrada-de-presunto-e-queijo
+
+> {%
+  client.test("Request executada com sucesso", function() {
+    client.assert(response.status === 200, "Status de resposta não é 200");
+    client.assert(JSON.stringify(response.body) === "{\"name\":\"Torrada de presunto e queijo\",\"ingredients\":[{\"name\":\"pão\"},{\"name\":\"presunto\"},{\"name\":\"queijo\"},{\"name\":\"butter\"}]}", "Body match expected response")
+
+  });
+%}
+
+###
+DELETE http://localhost:8080/receitas/torrada-de-presunto-e-queijo
+
+> {%
+  client.test("Request executada com sucesso", function() {
+    client.assert(response.status === 200, "Status de resposta não é 200");
+  });
+%}
+
+###
+GET http://localhost:8080/receitas/torrada-de-presunto-e-queijo
+
+> {%
+  client.test("Request executada com sucesso", function() {
+    client.assert(response.status === 404, "Response status is not 404");
   });
 %}

@@ -1,11 +1,11 @@
 {
-  "name": "Torrada de queijo e presunto",
+  "name": "Torrada de presunto e queijo",
   "ingredients": [
     {
       "name": "pão"
     },{
       "name": "presunto"
-    }, {
+    },{
       "name": "queijo"
     }
   ]
